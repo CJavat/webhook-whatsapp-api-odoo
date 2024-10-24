@@ -16,12 +16,18 @@ export class WhatsappWebhookService {
     const verifyToken = this.configService.get('TOKEN_ODOO');
 
     if (mode && token === verifyToken) {
-      const odooConection = await axios.get(
-        `https://hortomallas1.odoo.com/whatsapp/webhook?hub.mode=${mode}&hub.challenge=${challenge}&hub.verify_token=${token}`,
-      );
+      try {
+        const odooConection = await axios.get(
+          `https://hortomallas1.odoo.com/whatsapp/webhook?hub.mode=${mode}&hub.challenge=${challenge}&hub.verify_token=${token}`,
+        );
 
-      this.sessionCookie = odooConection.headers['set-cookie'][0].split(';')[0];
-      return odooConection.data; // Verificación exitosa.
+        this.sessionCookie =
+          odooConection.headers['set-cookie'][0].split(';')[0];
+        console.log('Token verificado correctamente ');
+        return odooConection.data; // Verificación exitosa.
+      } catch (error) {
+        console.log(`error al verificar el token: ${error}`);
+      }
     }
 
     return 'Token de verificación incorrecto';
@@ -33,6 +39,8 @@ export class WhatsappWebhookService {
   ) {
     let messageFormatted = {};
     const secret = this.configService.get('SECRET_APP');
+
+    console.log('Mensaje entrante: ', messageFromUser);
 
     if (
       'referral' in messageFromUser?.entry[0]?.changes[0]?.value.messages[0]
