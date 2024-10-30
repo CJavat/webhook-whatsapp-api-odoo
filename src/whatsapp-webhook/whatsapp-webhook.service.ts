@@ -42,7 +42,7 @@ export class WhatsappWebhookService {
 
     console.log('Mensaje entrante: ', JSON.stringify(messageFromUser, null, 4));
 
-    if (messageFromUser?.entry[0]?.changes[0]?.value?.messages) {
+    if ('messages' in messageFromUser?.entry[0]?.changes[0]?.value) {
       if (
         'referral' in messageFromUser?.entry[0]?.changes[0]?.value?.messages[0]
       ) {
@@ -120,9 +120,12 @@ export class WhatsappWebhookService {
       .catch((err) => {
         if (err.isAxiosError) {
           const axiosError = err as AxiosError;
-          console.error('Axios error message:', axiosError.message);
-          console.error('Axios error config:', axiosError.config);
-          console.error('Axios error code:', axiosError.code);
+          // console.error('Axios error message:', axiosError.message);
+          console.error(
+            'Axios error config:',
+            JSON.stringify(axiosError.config, null, 4),
+          );
+          // console.error('Axios error code:', axiosError.code);
         } else {
           console.log('error', err);
         }
