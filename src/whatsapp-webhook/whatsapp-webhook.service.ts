@@ -43,7 +43,7 @@ export class WhatsappWebhookService {
     console.log('Mensaje entrante: ', JSON.stringify(messageFromUser, null, 4));
 
     if (
-      'referral' in messageFromUser?.entry[0]?.changes[0]?.value.messages[0]
+      'referral' in messageFromUser?.entry[0]?.changes[0]?.value?.messages[0]
     ) {
       const modifiedMessage = JSON.parse(JSON.stringify(messageFromUser)); // Hacer una copia profunda
       const referral =
