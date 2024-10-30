@@ -42,14 +42,15 @@ export class WhatsappWebhookService {
 
     console.log('Mensaje entrante: ', JSON.stringify(messageFromUser, null, 4));
 
-    if (
-      'referral' in messageFromUser?.entry[0]?.changes[0]?.value?.messages[0]
-    ) {
-      const modifiedMessage = JSON.parse(JSON.stringify(messageFromUser)); // Hacer una copia profunda
-      const referral =
-        modifiedMessage.entry[0].changes[0].value.messages[0].referral;
+    if (messageFromUser?.entry[0]?.changes[0]?.value?.messages) {
+      if (
+        'referral' in messageFromUser?.entry[0]?.changes[0]?.value?.messages[0]
+      ) {
+        const modifiedMessage = JSON.parse(JSON.stringify(messageFromUser)); // Hacer una copia profunda
+        const referral =
+          modifiedMessage.entry[0].changes[0].value.messages[0].referral;
 
-      const body = `
+        const body = `
       -- MENSAJE DE ANUNCIO --
       * URL: ${referral.source_url}
       * TÍTULO: ${referral.headline}
@@ -58,51 +59,52 @@ export class WhatsappWebhookService {
       ${messageFromUser.entry[0].changes[0].value.messages[0].text.body}
       `;
 
-      let messages = {
-        from: messageFromUser.entry[0].changes[0].value.messages[0].from,
-        id: messageFromUser.entry[0].changes[0].value.messages[0].id,
-        timestamp:
-          messageFromUser.entry[0].changes[0].value.messages[0].timestamp,
-        text: {
-          body: body,
-        },
-        type: messageFromUser.entry[0].changes[0].value.messages[0].type,
-      };
-
-      modifiedMessage.entry[0].changes[0].value.messages[0] = messages;
-      messageFormatted = modifiedMessage;
-
-      const payload = JSON.stringify(messageFormatted);
-      const xHubSignature256 = `sha256=${crypto
-        .createHmac('sha256', secret)
-        .update(payload, 'utf8') // Actualiza el HMAC con el payload
-        .digest('hex')}`;
-
-      await axios
-        .post(
-          `https://hortomallas1.odoo.com/whatsapp/webhook`,
-          messageFormatted,
-          {
-            headers: {
-              'x-hub-signature-256': xHubSignature256,
-            },
+        let messages = {
+          from: messageFromUser.entry[0].changes[0].value.messages[0].from,
+          id: messageFromUser.entry[0].changes[0].value.messages[0].id,
+          timestamp:
+            messageFromUser.entry[0].changes[0].value.messages[0].timestamp,
+          text: {
+            body: body,
           },
-        )
-        .then((response) => {
-          console.log(JSON.stringify({ data: response.data }, null, 4));
+          type: messageFromUser.entry[0].changes[0].value.messages[0].type,
+        };
 
-          return response.data;
-        })
-        .catch((err) => {
-          if (err.isAxiosError) {
-            const axiosError = err as AxiosError;
-            console.error('Axios error message:', axiosError.message);
-            console.error('Axios error config:', axiosError.config);
-            console.error('Axios error code:', axiosError.code);
-          } else {
-            console.log('error', err);
-          }
-        });
+        modifiedMessage.entry[0].changes[0].value.messages[0] = messages;
+        messageFormatted = modifiedMessage;
+
+        const payload = JSON.stringify(messageFormatted);
+        const xHubSignature256 = `sha256=${crypto
+          .createHmac('sha256', secret)
+          .update(payload, 'utf8') // Actualiza el HMAC con el payload
+          .digest('hex')}`;
+
+        await axios
+          .post(
+            `https://hortomallas1.odoo.com/whatsapp/webhook`,
+            messageFormatted,
+            {
+              headers: {
+                'x-hub-signature-256': xHubSignature256,
+              },
+            },
+          )
+          .then((response) => {
+            console.log(JSON.stringify({ data: response.data }, null, 4));
+
+            return response.data;
+          })
+          .catch((err) => {
+            if (err.isAxiosError) {
+              const axiosError = err as AxiosError;
+              console.error('Axios error message:', axiosError.message);
+              console.error('Axios error config:', axiosError.config);
+              console.error('Axios error code:', axiosError.code);
+            } else {
+              console.log('error', err);
+            }
+          });
+      }
     }
 
     await axios
