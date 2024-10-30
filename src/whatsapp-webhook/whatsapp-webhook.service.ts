@@ -40,7 +40,7 @@ export class WhatsappWebhookService {
     let messageFormatted = {};
     const secret = this.configService.get('SECRET_APP');
 
-    console.log('Mensaje entrante: ', messageFromUser);
+    console.log('Mensaje entrante: ', JSON.stringify(messageFromUser, null, 4));
 
     if (
       'referral' in messageFromUser?.entry[0]?.changes[0]?.value.messages[0]
