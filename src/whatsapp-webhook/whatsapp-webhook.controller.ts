@@ -28,4 +28,12 @@ export class WhatsappWebhookController {
       req.headers as unknown as FacebookHeaders,
     );
   }
+
+  @Post('webhook/templates')
+  async handleTemplates(@Body() body: MessageFromUser, @Req() req: Request) {
+    return this.whatsappWebhookService.getMessageFromUser(
+      body,
+      req.headers as unknown as FacebookHeaders,
+    );
+  }
 }

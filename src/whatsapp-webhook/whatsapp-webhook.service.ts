@@ -4,7 +4,12 @@ import { ConfigService } from '@nestjs/config';
 import axios, { AxiosError } from 'axios';
 import * as crypto from 'crypto';
 
-import { FacebookHeaders, MessageFromUser } from './interfaces';
+import {
+  FacebookHeaders,
+  MessageFromUser,
+  TemplatesMessage,
+  TemplatesMessageResponse,
+} from './interfaces';
 
 @Injectable()
 export class WhatsappWebhookService {
@@ -40,7 +45,14 @@ export class WhatsappWebhookService {
     let messageFormatted = {};
     const secret = this.configService.get('SECRET_APP');
 
-    console.log('Mensaje entrante: ', JSON.stringify(messageFromUser, null, 4));
+    // console.log('Mensaje entrante: ', JSON.stringify(messageFromUser, null, 4));
+    //! Falta ver como es que se ven los mensajes enviados por HORTOMALLAS® porque puede que de error ahí en el Console Log.
+    console.log(`
+      Mensaje entrante:
+      Nombre: ${messageFromUser.entry[0].changes[0].value.contacts[0].profile.name}
+      Teléfono: ${messageFromUser.entry[0].changes[0].value.messages[0].from}
+      Mensaje: ${messageFromUser.entry[0].changes[0].value.messages[0].text.body}
+    `);
 
     if ('messages' in messageFromUser?.entry[0]?.changes[0]?.value) {
       if (
@@ -100,8 +112,10 @@ export class WhatsappWebhookService {
               console.error('Axios error message:', axiosError.message);
               console.error('Axios error config:', axiosError.config);
               console.error('Axios error code:', axiosError.code);
+              return;
             } else {
               console.log('error', err);
+              return;
             }
           });
       }
@@ -116,6 +130,7 @@ export class WhatsappWebhookService {
       })
       .then((response) => {
         console.log(JSON.stringify({ data: response.data }, null, 4));
+        return;
       })
       .catch((err) => {
         if (err.isAxiosError) {
@@ -126,8 +141,10 @@ export class WhatsappWebhookService {
             JSON.stringify(axiosError.config, null, 4),
           );
           // console.error('Axios error code:', axiosError.code);
+          return;
         } else {
           console.log('error', err);
+          return;
         }
       });
   }
