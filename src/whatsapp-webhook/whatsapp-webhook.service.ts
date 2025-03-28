@@ -55,10 +55,11 @@ export class WhatsappWebhookService {
     `);
 
     if ('messages' in messageFromUser?.entry[0]?.changes[0]?.value) {
-      console.log('Entró a la condición de enviar los mensajes por campaña');
       if (
         'referral' in messageFromUser?.entry[0]?.changes[0]?.value?.messages[0]
       ) {
+        console.log('Entró a la condición de enviar los mensajes por campaña'); //TODO: Verificar después que no entré aquí cuando yo (usuario) envió un mensaje a Hortomallas.
+
         const modifiedMessage = JSON.parse(JSON.stringify(messageFromUser)); // Hacer una copia profunda
         const referral =
           modifiedMessage.entry[0].changes[0].value.messages[0].referral;
