@@ -55,6 +55,7 @@ export class WhatsappWebhookService {
     `);
 
     if ('messages' in messageFromUser?.entry[0]?.changes[0]?.value) {
+      console.log('Entró a la condición de enviar los mensajes por campaña');
       if (
         'referral' in messageFromUser?.entry[0]?.changes[0]?.value?.messages[0]
       ) {
@@ -110,8 +111,8 @@ export class WhatsappWebhookService {
             if (err.isAxiosError) {
               const axiosError = err as AxiosError;
               console.error('Axios error message:', axiosError.message);
-              console.error('Axios error config:', axiosError.config);
-              console.error('Axios error code:', axiosError.code);
+              // console.error('Axios error config:', axiosError.config);
+              // console.error('Axios error code:', axiosError.code);
               return;
             } else {
               console.log('error', err);
@@ -129,18 +130,15 @@ export class WhatsappWebhookService {
         },
       })
       .then((response) => {
+        console.log('Mensajes enviados normal (NO CAMPAÑA)');
         console.log(JSON.stringify({ data: response.data }, null, 4));
         return;
       })
       .catch((err) => {
+        console.log('Mensajes enviados normal (NO CAMPAÑA)');
         if (err.isAxiosError) {
           const axiosError = err as AxiosError;
-          // console.error('Axios error message:', axiosError.message);
-          console.error(
-            'Axios error config:',
-            JSON.stringify(axiosError.config, null, 4),
-          );
-          // console.error('Axios error code:', axiosError.code);
+          console.error('Axios error message:', axiosError.message);
           return;
         } else {
           console.log('error', err);
