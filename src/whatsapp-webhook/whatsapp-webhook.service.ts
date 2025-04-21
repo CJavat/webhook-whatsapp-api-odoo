@@ -136,7 +136,7 @@ export class WhatsappWebhookService {
         return;
       })
       .catch((err) => {
-        console.log('Mensajes enviados normal (NO CAMPAÑA)');
+        console.log('Error | Mensajes enviados normal (NO CAMPAÑA)');
         if (err.isAxiosError) {
           const axiosError = err as AxiosError;
           console.error('Axios error message:', axiosError.message);
