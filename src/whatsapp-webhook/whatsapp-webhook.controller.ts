@@ -24,6 +24,7 @@ export class WhatsappWebhookController {
     @Req() req: Request,
   ) {
     console.log(JSON.stringify(body, null, 3));
+    console.log(JSON.stringify(req, null, 3));
     return this.whatsappWebhookService.getMessageFromUser(
       body,
       req.headers as unknown as FacebookHeaders,
