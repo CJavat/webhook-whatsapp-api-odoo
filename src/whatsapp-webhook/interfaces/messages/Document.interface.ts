@@ -1,4 +1,4 @@
-export interface MessageFromUser {
+export interface DocumentInterfaceTs {
   object: string;
   entry: Entry[];
 }
@@ -33,12 +33,15 @@ interface Message {
   from: string;
   id: string;
   timestamp: string;
-  text: Text;
   type: string;
+  document: Document;
 }
 
-interface Text {
-  body: string;
+interface Document {
+  filename: string;
+  mime_type: string;
+  sha256: string;
+  id: string;
 }
 
 interface Metadata {

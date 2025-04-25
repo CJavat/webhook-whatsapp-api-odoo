@@ -1,7 +1,8 @@
 import { Body, Controller, Get, Post, Query, Req } from '@nestjs/common';
-import { WhatsappWebhookService } from './whatsapp-webhook.service';
-import { FacebookHeaders, MessageFromUser } from './interfaces';
 import { Request } from 'express';
+import { WhatsappWebhookService } from './whatsapp-webhook.service';
+
+import { GenericMessage } from './interfaces';
 
 @Controller('whatsapp-webhook')
 export class WhatsappWebhookController {
@@ -20,22 +21,14 @@ export class WhatsappWebhookController {
 
   @Post('webhook')
   async handleIncomingMessage(
-    @Body() body: MessageFromUser,
+    @Body() body: GenericMessage,
     @Req() req: Request,
   ) {
-    console.log(JSON.stringify(body, null, 3));
-    console.log(JSON.stringify(req, null, 3));
-    return this.whatsappWebhookService.getMessageFromUser(
-      body,
-      req.headers as unknown as FacebookHeaders,
-    );
+    return this.whatsappWebhookService.getMessages(body, req);
   }
 
   @Post('webhook/templates')
-  async handleTemplates(@Body() body: MessageFromUser, @Req() req: Request) {
-    return this.whatsappWebhookService.getMessageFromUser(
-      body,
-      req.headers as unknown as FacebookHeaders,
-    );
+  async handleTemplates(@Body() body: GenericMessage, @Req() req: Request) {
+    return this.whatsappWebhookService.getMessages(body, req.headers);
   }
 }
